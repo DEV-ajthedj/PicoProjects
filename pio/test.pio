@@ -1,0 +1,32 @@
+.program test
+
+set pindirs, 0
+set y, 8
+
+.wrap_target
+    mov x, y
+    in pins, 1
+    push
+.wrap
+
+
+
+
+% c-sdk {
+static inline void test_program_init(PIO pio, uint sm, uint offset, uint in_pin, uint in_pin_count) {
+    pio_sm_config config = test_program_get_default_config(offset);
+
+    sm_config_set_in_pins(&config, in_pin);
+    pio_sm_set_consecutive_pindirs(pio, sm, in_pin, in_pin_count, 0);
+    pio_gpio_init(pio, in_pin);
+
+    sm_config_set_in_shift(&config, true, false, 32);
+
+    // PIO_FIFO_JOIN_NONE = 0, PIO_FIFO_JOIN_TX = 1, PIO_FIFO_JOIN_RX = 2
+    sm_config_set_fifo_join(&config, PIO_FIFO_JOIN_NONE);
+
+    pio_sm_init(pio, sm, offset, &config);
+
+    pio_sm_set_enabled(pio, sm, true);
+}
+%}
