@@ -28,6 +28,12 @@ void gpio_callback(uint gpio, uint32_t events) {
     if (events & GPIO_IRQ_EDGE_FALL) {
         if (gpio == RX_PIN) {
             ir_detected = true;
+            led_on(LED_PIN);
+        }
+    } else if (events & GPIO_IRQ_EDGE_RISE) {
+        if (gpio == RX_PIN) {
+            ir_detected = false;
+            led_off(LED_PIN);
         }
     }
 }
